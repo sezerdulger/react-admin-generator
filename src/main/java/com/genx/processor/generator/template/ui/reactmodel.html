@@ -1,0 +1,86 @@
+// in src/users.js
+import * as React from "react";
+import {
+    List,
+    Datagrid,
+    TextField,
+    ReferenceField,
+    EditButton,
+    Edit,
+    SimpleForm,
+    ReferenceInput,
+    SelectInput,
+    TextInput,
+    Create,
+    Filter,
+    SimpleList
+} from 'react-admin';
+import { useMediaQuery } from '@material-ui/core';
+
+export const ${domainModel.className}List = (props) => {
+    const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
+    return (
+        <List {...props} filters={<${domainModel.className}Filter />}>
+            {isSmall ? (
+                <SimpleList
+                    primaryText={record => record.firstname}
+                    secondaryText={record => `${r"${record.views}"} views`}
+                    tertiaryText={record => new Date(record.published_at).toLocaleDateString()}
+                />
+            ) : (
+                <Datagrid>
+                    <#list domainModel.fields as field>
+                    <#if field.reference>
+                    <ReferenceField label="${field.title}" source="${field.id}" reference="${field.referenceModelId}">
+                        <TextField source="${field.referenceFieldId}" />
+                    </ReferenceField>
+                    <#else>
+                    <TextField source="${field.id}" />
+                    </#if>
+                    </#list>
+                    <EditButton />
+                </Datagrid>
+            )}
+        </List>
+    );
+}
+
+export const ${domainModel.className}Edit = props => (
+    <Edit {...props}>
+        <SimpleForm>
+        	<#list domainModel.fields as field>
+            <#if field.reference>
+            <ReferenceInput label="${field.title}" source="${field.id}" reference="${field.referenceModelId}">
+                <SelectInput source="${field.referenceFieldId}" />
+            </ReferenceInput>
+            <#else>
+            <TextInput <#if field.id == "uid">disabled</#if> source="${field.id}" />
+            </#if>
+            </#list>
+        </SimpleForm>
+    </Edit>
+);
+
+export const ${domainModel.className}Create = props => (
+    <Create {...props}>
+        <SimpleForm>
+            <#list domainModel.fields as field>
+            <#if field.reference>
+            <ReferenceInput label="${field.title}" source="${field.id}" reference="${field.referenceModelId}">
+                <SelectInput source="${field.referenceFieldId}" />
+            </ReferenceInput>
+            <#else>
+            <TextInput source="${field.id}" />
+            </#if>
+            </#list>
+        </SimpleForm>
+    </Create>
+);
+
+const ${domainModel.className}Filter = (props) => (
+    <Filter {...props}>
+    	<#list domainModel.fields as field>
+        <TextInput label="${field.title}" source="${field.id}" allowEmpty />
+        </#list>
+    </Filter>
+);

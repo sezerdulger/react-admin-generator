@@ -1,0 +1,74 @@
+package com.genx.base.${domainModel.packageName}.${processor.packageName};
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.*;
+
+import com.genx.base.${domainModel.packageName}.${generatorInfo.modelPackage}.*;
+import com.genx.base.${domainModel.packageName}.${generatorInfo.repositoryPackage}.*;
+
+import java.util.*;
+import java.util.stream.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.bson.Document;
+import org.springframework.util.StringUtils;
+import com.genx.base.${domainModel.packageName}.model.SearchQuery;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.support.PageableExecutionUtils;
+
+/**
+ * @author SD
+ * @date ${.now?string["yyyy/MM/dd"]}
+ */
+@Service
+public class ${domainModel.className}${processor.suffix} {
+	<#assign repositoryField="${domainModel.id}Repository"/>
+
+	@Autowired
+	${domainModel.className}Repository ${repositoryField};
+	
+	@Autowired
+	ObjectMapper mapper;
+	
+	@Autowired
+	MongoTemplate mongoTemplate;
+	
+    public ${domainModel.className} findByUid(String uid) {
+		return ${repositoryField}.findByUidIs(uid).orElse(null);
+	}
+	
+	public ${domainModel.className} save(${domainModel.className} ${domainModel.id}) {
+		${domainModel.id}.setUid(UUID.randomUUID().toString());
+		return ${repositoryField}.save(${domainModel.id});
+	}
+	
+	public Page<${domainModel.className}> findByPage(SearchQuery searchQuery) {
+		String tableName = StringUtils.uncapitalize(${domainModel.className}.class.getSimpleName().toLowerCase());
+		Document ob = new Document("find", tableName);
+		ob.append("filter", searchQuery.getQuery());
+		ob.append("skip", searchQuery.getPage() * searchQuery.getSize());
+		ob.append("limit", searchQuery.getSize());
+		Document result = mongoTemplate.executeCommand(ob);
+		
+		List<Document> documents = (List<Document>)(((Document)result.get("cursor")).get("firstBatch"));
+		
+		Document c = new Document();
+		c.put("count", tableName);
+		c.put("query", searchQuery.getQuery());
+		
+		Document countResult = mongoTemplate.getDb().runCommand(c);
+		PageRequest p = PageRequest.of(searchQuery.getPage(), searchQuery.getSize());
+		return PageableExecutionUtils.getPage(documents.stream()
+				.map(d -> mapper.convertValue(d, ${domainModel.className}.class))
+				.collect(Collectors.toList()), 
+				p, () -> new Long(countResult.getInteger("n")));
+		
+	}
+}

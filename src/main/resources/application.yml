@@ -1,0 +1,140 @@
+
+server:
+  port: -1
+spring:
+  main:
+    web-application-type: none
+generator:
+  modelPackage: model
+  controllerPackage: controller
+  servicePackage: service
+  utilPackage: util
+  constantPackage: constant
+  repositoryPackage: repository
+  processors:
+  - id: model
+    template: javamodelclass.html
+    packageName: model
+    suffix: ""
+  - id: controller
+    template: javacontrollerclass.html
+    packageName: controller
+    suffix: Controller
+  - id: service
+    template: javaserviceclass.html
+    packageName: service
+    suffix: Service
+  - id: util
+    template: javautilclass.html
+    packageName: util
+    suffix: Util
+  - id: constant
+    template: javaconstantclass.html
+    packageName: constant
+    suffix: Constant
+  - id: repository
+    template: javarepositoryclass.html
+    packageName: repository
+    suffix: Repository
+    
+  - id: ui
+    template: ui/reactmodel.html
+    packageName: ui
+    suffix: UI
+  output-dir: generated
+  domain-models:
+    - id: user
+      name: User
+      packageName: user
+      className: User
+      fields:
+        - id: firstname
+          javaType: String
+          title: Firstname
+          
+        - id: lastname
+          javaType: String
+          title: Lastname
+
+    - id: techsupport
+      name: TechSupport
+      packageName: techsupport
+      className: TechSupport
+      fields:
+         - id: customerTitle
+           javaType: String
+           title: Customer Title
+           
+         - id: address
+           javaType: String
+           title: Address
+           
+         - id: tel
+           javaType: String
+           title: Tel
+           
+         - id: emails
+           javaSupType: List
+           javaType: String
+           title: E-mails
+           
+         - id: authorizedPersonId
+           javaType: String
+           reference: true
+           referenceModelId: user
+           referenceFieldId: firstname
+           title: Authorized Person Id
+           
+         - id: authorizedPerson
+           javaType: String
+           title: Authorized Person
+           
+         - id: requestDate
+           javaType: Date
+           title: Request Date
+           
+         - id: serviceStartDate
+           javaType: Date
+           title: Service Start Date
+           
+         - id: serviceEndDate
+           javaType: Date
+           title: Service End Date
+           
+         - id: serviceType
+           javaType: String
+           title: Service Type
+           
+         - id: scope
+           javaType: String
+           title: Scope
+           
+         - id: serviceDefinition
+           javaType: String
+           title: Service Definition
+           
+         - id: usedMaterial
+           javaType: String
+           title: Used Material
+           
+         - id: contracted
+           javaType: boolean
+           title: Contracted
+           
+         - id: serviceDescription
+           javaType: String
+           title: Service Description
+           
+         - id: duration
+           javaType: long
+           title: Duration
+           
+         - id: pricing
+           javaType: long
+           title: Pricing
+      
+    
+logging:
+  level:
+    com.genx: debug
+    

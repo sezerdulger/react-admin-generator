@@ -1,0 +1,27 @@
+const ${field.name} = props => {
+    const form = useForm();
+    const dataProvider = useDataProvider();
+
+    return (
+        <ReferenceInput {...props} label="${field.label}" source="${field.id}" reference="${field.reference}"
+                onChange={(e) => {
+                    e.preventDefault()
+                   
+                    console.log(e)
+                    //dataProvider.getList('user',{id: e.target.value, filter:{}, sort:{field:"", order: ""},pagination: {page:1 , perPage: 1}}).then(({data}) => {
+                        //console.log(data)
+
+                        //form.change("authorizedPerson", data[0].firstname + " " + data[0].lastname)
+                    //})
+
+                    
+                    return true
+            }}
+                >
+                <SelectInput 
+                {...props}
+                 optionText={record=> ${field.referenceFieldTitle}}
+                     />
+            </ReferenceInput>
+    )
+}

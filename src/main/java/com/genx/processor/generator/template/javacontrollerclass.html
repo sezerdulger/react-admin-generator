@@ -1,0 +1,46 @@
+package com.genx.base.${domainModel.packageName}.${processor.packageName};
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.*;
+import org.springframework.http.*;
+
+import com.genx.base.${domainModel.packageName}.${generatorInfo.modelPackage}.*;
+import com.genx.base.${domainModel.packageName}.${generatorInfo.servicePackage}.*;
+
+import java.util.List;
+import java.util.Map;
+import org.springframework.data.domain.Pageable;
+
+/**
+ * @author SD
+ * @date ${.now?string["yyyy/MM/dd"]}
+ */
+@RestController
+@RequestMapping("/${domainModel.packageName}")
+public class ${domainModel.className}${processor.suffix} {
+	<#assign serviceField="${domainModel.id}Service"/>
+
+	@Autowired
+	${domainModel.className}Service ${serviceField};
+	
+    @GetMapping(value="/{uid}")
+    public ResponseEntity<?> findByUid(@PathVariable String uid) {
+		return ResponseEntity.ok(${serviceField}.findByUid(uid));
+	}
+
+    @PostMapping
+    public ResponseEntity<?> save(@RequestBody ${domainModel.className} ${domainModel.id}) {
+		return ResponseEntity.ok(${serviceField}.save(${domainModel.id}));
+	}
+
+	@PostMapping("/q")
+    public ResponseEntity<?> findByPage(@RequestBody SearchQuery searchQuery) {
+		return ResponseEntity.ok(${serviceField}.findByPage(searchQuery));
+	}
+}
