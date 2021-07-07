@@ -37,10 +37,10 @@ generator:
     packageName: repository
     suffix: Repository
     
-  - id: ui
-    template: ui/reactmodel.html
-    packageName: ui
-    suffix: UI
+  #- id: ui
+  #  template: ui/reactmodel.html
+  #  packageName: ui
+  #  suffix: UI
   output-dir: generated
   domain-models:
     - id: user

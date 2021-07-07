@@ -49,6 +49,10 @@ public class ${domainModel.className}${processor.suffix} {
 		return ${repositoryField}.save(${domainModel.id});
 	}
 	
+	public void delete(String uid) {
+		${repositoryField}.deleteByUid(uid);
+	}
+	
 	public Page<${domainModel.className}> findByPage(SearchQuery searchQuery) {
 		String tableName = StringUtils.uncapitalize(${domainModel.className}.class.getSimpleName().toLowerCase());
 		Document ob = new Document("find", tableName);

@@ -21,4 +21,6 @@ import java.util.*;
 @Repository
 public interface ${domainModel.className}${processor.suffix} extends PagingAndSortingRepository<${domainModel.className}, String> {
 	Optional<${domainModel.className}> findByUidIs(String uid);
+	
+	void deleteByUid(String uid);
 }

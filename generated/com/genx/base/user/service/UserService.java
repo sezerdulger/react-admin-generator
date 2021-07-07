@@ -25,7 +25,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 /**
  * @author SD
- * @date 2021/06/29
+ * @date 2021/07/06
  */
 @Service
 public class UserService {
@@ -46,6 +46,10 @@ public class UserService {
 	public User save(User user) {
 		user.setUid(UUID.randomUUID().toString());
 		return userRepository.save(user);
+	}
+	
+	public void delete(String uid) {
+		userRepository.deleteByUid(uid);
 	}
 	
 	public Page<User> findByPage(SearchQuery searchQuery) {

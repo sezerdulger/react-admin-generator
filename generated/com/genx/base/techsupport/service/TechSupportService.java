@@ -25,7 +25,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 /**
  * @author SD
- * @date 2021/06/29
+ * @date 2021/07/06
  */
 @Service
 public class TechSupportService {
@@ -46,6 +46,10 @@ public class TechSupportService {
 	public TechSupport save(TechSupport techsupport) {
 		techsupport.setUid(UUID.randomUUID().toString());
 		return techsupportRepository.save(techsupport);
+	}
+	
+	public void delete(String uid) {
+		techsupportRepository.deleteByUid(uid);
 	}
 	
 	public Page<TechSupport> findByPage(SearchQuery searchQuery) {

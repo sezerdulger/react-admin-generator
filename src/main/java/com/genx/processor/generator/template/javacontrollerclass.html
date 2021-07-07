@@ -38,6 +38,12 @@ public class ${domainModel.className}${processor.suffix} {
     public ResponseEntity<?> save(@RequestBody ${domainModel.className} ${domainModel.id}) {
 		return ResponseEntity.ok(${serviceField}.save(${domainModel.id}));
 	}
+	
+	@DeleteMapping("/{uid}")
+    public ResponseEntity<?> delete(@PathVariable String uid) {
+		${serviceField}.delete(uid);
+		return ResponseEntity.noContent().build();
+	}
 
 	@PostMapping("/q")
     public ResponseEntity<?> findByPage(@RequestBody SearchQuery searchQuery) {

@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * @author SD
- * @date 2021/06/29
+ * @date 2021/07/06
  */
 @RestController
 @RequestMapping("/user")
@@ -36,6 +36,12 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> save(@RequestBody User user) {
 		return ResponseEntity.ok(userService.save(user));
+	}
+	
+	@DeleteMapping("/{uid}")
+    public ResponseEntity<?> delete(@PathVariable String uid) {
+		userService.delete(uid);
+		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/q")
