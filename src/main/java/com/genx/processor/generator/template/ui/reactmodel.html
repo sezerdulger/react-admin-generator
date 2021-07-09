@@ -16,6 +16,9 @@ import {
     SimpleList
 } from 'react-admin';
 import { useMediaQuery } from '@material-ui/core';
+<#list domainModel.fields as field>
+import ${field.id} from "./create/fields/authorizedPersonId";
+ </#list>
 
 export const ${domainModel.className}List = (props) => {
     const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
@@ -31,11 +34,15 @@ export const ${domainModel.className}List = (props) => {
                 <Datagrid>
                     <#list domainModel.fields as field>
                     <#if field.reference>
+                    
                     <ReferenceField label="${field.title}" source="${field.id}" reference="${field.referenceModelId}">
                         <TextField source="${field.referenceFieldId}" />
                     </ReferenceField>
+                    
                     <#else>
+                    
                     <TextField source="${field.id}" />
+                    
                     </#if>
                     </#list>
                     <EditButton />

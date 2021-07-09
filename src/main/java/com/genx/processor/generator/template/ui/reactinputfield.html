@@ -1,0 +1,38 @@
+import * as React from "react";
+import {
+    List,
+    Datagrid,
+    TextField,
+    ReferenceField,
+    EditButton,
+    Edit,
+    SimpleForm,
+    ReferenceInput,
+    SelectInput,
+    TextInput,
+    Create,
+    Filter,
+    SimpleList,
+    useRecordContext,
+    useCreateController,
+    FormDataConsumer,
+    useGetOne,
+    useDataProvider,
+    AutocompleteInput
+} from 'react-admin';
+
+import { useForm } from 'react-final-form'
+
+import { useFormState } from 'react-final-form';
+import Emitter from "../../../emitter";
+
+const AuthUserRef = props => {
+    const form = useForm();
+    const dataProvider = useDataProvider();
+
+    return (
+        <TextInput  source="${field.id}" />
+    )
+}
+
+export default AuthUserRef

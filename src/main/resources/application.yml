@@ -82,7 +82,7 @@ generator:
            javaType: String
            reference: true
            referenceModelId: user
-           referenceFieldId: firstname
+           referenceTitleFromRecord: 'record.firstname + " " + record.lastname'
            title: Authorized Person Id
            
          - id: authorizedPerson

@@ -1,27 +1,45 @@
+import * as React from "react";
+import {
+    List,
+    Datagrid,
+    TextField,
+    ReferenceField,
+    EditButton,
+    Edit,
+    SimpleForm,
+    ReferenceInput,
+    SelectInput,
+    TextInput,
+    Create,
+    Filter,
+    SimpleList,
+    useRecordContext,
+    useCreateController,
+    FormDataConsumer,
+    useGetOne,
+    useDataProvider,
+    AutocompleteInput
+} from 'react-admin';
+import Emitter from "../../../emitter";
+import { useForm } from 'react-final-form'
+
 const ${field.name} = props => {
     const form = useForm();
     const dataProvider = useDataProvider();
 
     return (
-        <ReferenceInput {...props} label="${field.label}" source="${field.id}" reference="${field.reference}"
-                onChange={(e) => {
-                    e.preventDefault()
-                   
-                    console.log(e)
-                    //dataProvider.getList('user',{id: e.target.value, filter:{}, sort:{field:"", order: ""},pagination: {page:1 , perPage: 1}}).then(({data}) => {
-                        //console.log(data)
+        <ReferenceInput {...props} label="${field.title}" source="${field.id}" reference="${field.referenceModelId}" 
+        	perPage={100} 
+            onChange={(e) => {
+            	e.preventDefault()
+                 
+                Emitter.emit("techsupport_authorizedPersonId_changed", {event: e, form: form, dataProvider: dataProvider})
 
-                        //form.change("authorizedPerson", data[0].firstname + " " + data[0].lastname)
-                    //})
-
-                    
-                    return true
-            }}
-                >
-                <SelectInput 
-                {...props}
-                 optionText={record=> ${field.referenceFieldTitle}}
-                     />
-            </ReferenceInput>
+                return true
+            }}>
+            <SelectInput  {...props}
+             	optionText={record => ${field.referenceTitleFromRecord}}
+            />
+        </ReferenceInput>
     )
 }

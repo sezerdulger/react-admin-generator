@@ -46,7 +46,7 @@ public class GeneratorStarter {
 		            String fileBasePath = generatorConfig.getOutputDir() + 
 		            		"/com/genx/base/" + domainModel.getId().toLowerCase() + "/" + 
 		            		processor.getPackageName() + "/"; 
-		            		;
+
 		            String filePath = fileBasePath + domainModel.getClassName() + processor.getSuffix() + ".java";
 		            new File(fileBasePath).mkdirs();
 		            
@@ -64,8 +64,6 @@ public class GeneratorStarter {
 		        } catch (Exception e) {
 		            e.printStackTrace();
 		        }
-				
-				
 			});
 			try {
 	            Template template = cfg.getTemplate("SearchQuery.html");
@@ -89,8 +87,60 @@ public class GeneratorStarter {
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
+			
+			try {
+	            Template template = cfg.getTemplate("ui/reactmodel.html");
+
+	            String fileBasePath = generatorConfig.getOutputDir() + 
+	            		"/com/genx/base/ui/";
+	            
+	            String filePath = fileBasePath + domainModel.getId() + "/" + domainModel.getId() +  ".js";
+	            new File(fileBasePath).mkdirs();
+	            
+	            FileOutputStream fos = new FileOutputStream(filePath);
+	            
+	            Map data = new HashMap();	
+	            data.put("domainModel", domainModel);
+	            
+	            template.process(data, new OutputStreamWriter(fos, "utf-8"));
+
+	            fos.flush();
+	            fos.close();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+			
+			domainModel.getFields().forEach(field -> {
+				try {
+		            Template template = null;
+		            if (field.isReference()) {
+		            	template = cfg.getTemplate("ui/reactreferencefield.html");
+		            }
+		            else {
+		            	template = cfg.getTemplate("ui/reactinputfield.html");
+		            }
+
+		            String fileBasePath = generatorConfig.getOutputDir() + 
+		            		"/com/genx/base/ui/" + domainModel.getId() + "/create/fields/";
+		            
+		            String filePath = fileBasePath + field.getId() + ".js";
+		            new File(fileBasePath).mkdirs();
+		            
+		            FileOutputStream fos = new FileOutputStream(filePath);
+		            
+		            Map data = new HashMap();	
+		            data.put("domainModel", domainModel);
+		            
+		            template.process(data, new OutputStreamWriter(fos, "utf-8"));
+
+		            fos.flush();
+		            fos.close();
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+			});
+			
 		});
-		
 		
 	}
 
