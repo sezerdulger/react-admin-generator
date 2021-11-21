@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class DomainModel {
+	private String tenant;
 	private String id;
 	private String packageName;
 	private String className;

@@ -1,0 +1,44 @@
+import * as React from "react";
+import {
+    List,
+    Datagrid,
+    TextField,
+    ReferenceField,
+    EditButton,
+    Edit,
+    SimpleForm,
+    ReferenceInput,
+    SelectInput,
+    TextInput,
+    Create,
+    Filter,
+    SimpleList,
+    useRecordContext,
+    useCreateController,
+    FormDataConsumer,
+    useGetOne,
+    useDataProvider,
+    AutocompleteInput,
+    ArrayInput,
+    SimpleFormIterator
+} from 'react-admin';
+
+import { useForm, useFormState } from 'react-final-form'
+
+import Emitter from "../../../../emitter";
+
+const <@upperFC>${field.id}</@upperFC> = props => {
+    const form = useForm();
+    const dataProvider = useDataProvider();
+    const { values } = useFormState()
+
+    return (
+		<ArrayInput {...props} source="${field.id}" disabled={values.disable${field.id?cap_first}}>
+            <SimpleFormIterator>
+                <TextInput  />
+            </SimpleFormIterator>
+        </ArrayInput>
+    )
+}
+
+export default <@upperFC>${field.id}</@upperFC>

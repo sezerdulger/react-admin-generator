@@ -1,0 +1,22 @@
+<#list domainModels as domainModel>
+import ${domainModel.id}DataProvider from "./${domainModel.id}/provider/${domainModel.id}DataProvider";
+</#list>
+
+const dataProviders = [
+<#list domainModels as domainModel>
+  { dataProvider: ${domainModel.id}DataProvider, resources: ['${domainModel.id?lower_case}'] },
+  </#list>
+];
+
+export default (type, resource, params) => {
+
+  const dataProviderMapping = dataProviders.find(dp => dp.resources.includes(resource));
+  let t
+  t = type.split("_")[0].toLowerCase()
+  if (type.split("_").length > 1) {
+    const s = type.split("_")[1].toLowerCase()
+    t += s.charAt(0).toUpperCase() + s.slice(1)
+  }
+  
+  return dataProviderMapping.dataProvider[t](resource, params);
+};

@@ -1,4 +1,4 @@
-package com.genx.base.${domainModel.packageName}.${processor.packageName};
+package com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.${processor.packageName};
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +15,6 @@ import java.util.Map;
  * @author SD
  * @date ${.now?string["yyyy/MM/dd"]}
  */
-public class ${domainModel.className}${processor.suffix} {
+public class ${domainModel.tenant?cap_first}${domainModel.className}${processor.suffix} {
 
 }

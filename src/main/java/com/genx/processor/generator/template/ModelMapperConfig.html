@@ -1,0 +1,36 @@
+package com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.model.mapper.config;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.model.dao.${domainModel.tenant?cap_first}${domainModel.className};
+import com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.model.dto.${domainModel.tenant?cap_first}${domainModel.className}DTO;
+
+import com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.model.mapper.provider.${domainModel.tenant?cap_first}${domainModel.className}To${domainModel.tenant?cap_first}${domainModel.className}DTOProvider;
+import com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.model.mapper.provider.${domainModel.tenant?cap_first}${domainModel.className}DTOTo${domainModel.tenant?cap_first}${domainModel.className}Provider;
+import javax.annotation.PostConstruct;
+
+@Configuration
+public class ${domainModel.tenant?cap_first}${domainModel.className}MapperConfig {
+	
+	@Autowired
+	ModelMapper modelMapper;
+
+    @Autowired
+    private ${domainModel.tenant?cap_first}${domainModel.className}To${domainModel.tenant?cap_first}${domainModel.className}DTOProvider ${domainModel.id}To${domainModel.tenant?cap_first}${domainModel.className}DTOProvider;
+    
+    @Autowired
+    private ${domainModel.tenant?cap_first}${domainModel.className}DTOTo${domainModel.tenant?cap_first}${domainModel.className}Provider ${domainModel.id}DTOTo${domainModel.tenant?cap_first}${domainModel.className}Provider;
+    
+
+	@PostConstruct
+    public void modelMapper() {
+        // Domain to DTO conversions
+        modelMapper.createTypeMap(${domainModel.tenant?cap_first}${domainModel.className}.class, ${domainModel.tenant?cap_first}${domainModel.className}DTO.class).setProvider(${domainModel.id}To${domainModel.tenant?cap_first}${domainModel.className}DTOProvider);
+        // DTO to Domain conversions
+        modelMapper.createTypeMap(${domainModel.tenant?cap_first}${domainModel.className}DTO.class, ${domainModel.tenant?cap_first}${domainModel.className}.class).setProvider(${domainModel.id}DTOTo${domainModel.tenant?cap_first}${domainModel.className}Provider);
+    }
+
+}

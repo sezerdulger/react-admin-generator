@@ -1,4 +1,4 @@
-package com.genx.base.${domainModel.packageName}.${processor.packageName};
+package com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.${processor.packageName};
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +8,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.*;
 
-import com.genx.base.${domainModel.packageName}.${generatorInfo.modelPackage}.*;
-import com.genx.base.${domainModel.packageName}.${generatorInfo.repositoryPackage}.*;
+import com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.${generatorInfo.modelPackage}.dao.*;
+import com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.${generatorInfo.modelPackage}.dto.*;
+
+import com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.${generatorInfo.repositoryPackage}.*;
 
 import java.util.*;
 import java.util.stream.*;
@@ -17,7 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.bson.Document;
 import org.springframework.util.StringUtils;
-import com.genx.base.${domainModel.packageName}.model.SearchQuery;
+import com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.model.dto.SearchQuery;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -28,11 +30,11 @@ import org.springframework.data.support.PageableExecutionUtils;
  * @date ${.now?string["yyyy/MM/dd"]}
  */
 @Service
-public class ${domainModel.className}${processor.suffix} {
-	<#assign repositoryField="${domainModel.id}Repository"/>
+public class ${domainModel.tenant?cap_first}${domainModel.className}${processor.suffix} {
+	<#assign repositoryField="${domainModel.id}RepositoryExt"/>
 
 	@Autowired
-	${domainModel.className}Repository ${repositoryField};
+	${domainModel.tenant?cap_first}${domainModel.className}Repository ${repositoryField};
 	
 	@Autowired
 	ObjectMapper mapper;
@@ -40,12 +42,20 @@ public class ${domainModel.className}${processor.suffix} {
 	@Autowired
 	MongoTemplate mongoTemplate;
 	
-    public ${domainModel.className} findByUid(String uid) {
+    public ${domainModel.tenant?cap_first}${domainModel.className} findByUid(String uid) {
 		return ${repositoryField}.findByUidIs(uid).orElse(null);
 	}
 	
-	public ${domainModel.className} save(${domainModel.className} ${domainModel.id}) {
+	public ${domainModel.tenant?cap_first}${domainModel.className} save(${domainModel.tenant?cap_first}${domainModel.className} ${domainModel.id}) {
 		${domainModel.id}.setUid(UUID.randomUUID().toString());
+		return ${repositoryField}.save(${domainModel.id});
+	}
+	
+	public ${domainModel.tenant?cap_first}${domainModel.className} update(String uid, ${domainModel.tenant?cap_first}${domainModel.className} ${domainModel.id}) {
+		${domainModel.tenant?cap_first}${domainModel.className} ${domainModel.id}DAO = ${repositoryField}.findByUidIs(uid).orElse(null);
+		if (${domainModel.id}DAO != null) {
+			${domainModel.id}.setId(${domainModel.id}DAO.getId());
+		}
 		return ${repositoryField}.save(${domainModel.id});
 	}
 	
@@ -53,8 +63,8 @@ public class ${domainModel.className}${processor.suffix} {
 		${repositoryField}.deleteByUid(uid);
 	}
 	
-	public Page<${domainModel.className}> findByPage(SearchQuery searchQuery) {
-		String tableName = StringUtils.uncapitalize(${domainModel.className}.class.getSimpleName().toLowerCase());
+	public Page<${domainModel.tenant?cap_first}${domainModel.className}> findByPage(SearchQuery searchQuery) {
+		String tableName = StringUtils.uncapitalize(${domainModel.tenant?cap_first}${domainModel.className}.class.getSimpleName());
 		Document ob = new Document("find", tableName);
 		ob.append("filter", searchQuery.getQuery());
 		ob.append("skip", searchQuery.getPage() * searchQuery.getSize());
@@ -70,7 +80,7 @@ public class ${domainModel.className}${processor.suffix} {
 		Document countResult = mongoTemplate.getDb().runCommand(c);
 		PageRequest p = PageRequest.of(searchQuery.getPage(), searchQuery.getSize());
 		return PageableExecutionUtils.getPage(documents.stream()
-				.map(d -> mapper.convertValue(d, ${domainModel.className}.class))
+				.map(d -> mapper.convertValue(d, ${domainModel.tenant?cap_first}${domainModel.className}.class))
 				.collect(Collectors.toList()), 
 				p, () -> new Long(countResult.getInteger("n")));
 		

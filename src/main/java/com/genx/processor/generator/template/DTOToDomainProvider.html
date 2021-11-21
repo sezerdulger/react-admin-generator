@@ -1,0 +1,26 @@
+package com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.model.mapper.provider;
+
+import org.modelmapper.Provider;
+
+import com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.model.dao.${domainModel.tenant?cap_first}${domainModel.className};
+import com.genx.${domainModel.tenant}.processor.base.${domainModel.packageName}.model.dto.${domainModel.tenant?cap_first}${domainModel.className}DTO;
+import org.springframework.stereotype.Component;
+import lombok.Builder;
+
+@Component
+public class ${domainModel.tenant?cap_first}${domainModel.className}DTOTo${domainModel.tenant?cap_first}${domainModel.className}Provider implements Provider<${domainModel.tenant?cap_first}${domainModel.className}> {
+
+    @Override
+    public ${domainModel.tenant?cap_first}${domainModel.className} get(ProvisionRequest<${domainModel.tenant?cap_first}${domainModel.className}> request) {
+        ${domainModel.tenant?cap_first}${domainModel.className}DTO ${domainModel.id}DTO = ${domainModel.tenant?cap_first}${domainModel.className}DTO.class.cast(request.getSource());
+        
+        
+        ${domainModel.tenant?cap_first}${domainModel.className} ${domainModel.id} = ${domainModel.tenant?cap_first}${domainModel.className}.builder()
+        	<#list domainModel.fields as field>
+        	.${field.id}(${domainModel.id}DTO.<#if field.javaType == "boolean">is<#else>get</#if><@upperFC>${field.id}</@upperFC>())
+        	</#list>
+        	.build();
+
+        return ${domainModel.id};
+    }
+}

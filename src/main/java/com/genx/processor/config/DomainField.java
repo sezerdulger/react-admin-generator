@@ -1,5 +1,7 @@
 package com.genx.processor.config;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +18,22 @@ public class DomainField {
 	private String title;
 	
 	@Builder.Default
-	private boolean reference = false;
+	private Boolean reference = false;
 	
+	@Builder.Default
+	private Boolean referenceMultiple = false;
+	
+	@Builder.Default
+	private Boolean longText = false;
+	
+	@Builder.Default
+	private Boolean file = false;
+	
+	@Builder.Default
+	private Boolean playableVideo = false;
+
 	private String referenceModelId;
-	private String referenceFieldId;
+	private String referenceTitleFromRecord;
+	private List<String> referenceTitles;
+
 }

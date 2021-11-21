@@ -1,0 +1,55 @@
+// in src/Processor.js
+import * as React from "react";
+import { Admin, Resource, ListGuesser, EditGuesser } from 'react-admin';
+<#list domainModels as domainModel>
+import { ${domainModel.className}List, ${domainModel.className}Create, ${domainModel.className}Edit } from './${domainModel.id}/${domainModel.id}';
+
+</#list>
+import jsonServerProvider from 'ra-data-json-server';
+import PostIcon from '@material-ui/icons/Book';
+import UserIcon from '@material-ui/icons/Group';
+import ComputerIcon from '@material-ui/icons/Computer';
+import Dashboard from '../Dashboard';
+import authProvider from './authProvider';
+import customDataProvider from './customDataProvider';
+import multipleDataProvider from "./multipleDataProvider";
+import { Provider } from 'react-redux'
+
+<#list domainModels as domainModel>
+import ${domainModel.id}ShowColumnSlicer from "./${domainModel.id}/slicer/${domainModel.id}ShowColumnSlicer";
+import ${domainModel.id}FieldEditedSlicer from "./${domainModel.id}/slicer/${domainModel.id}FieldEditedSlicer";
+</#list>
+
+
+import { i18nProvider } from "./i18nprovider";
+import MyLayout from "./main/MyLayout";
+
+
+const dataProvider = jsonServerProvider('https://jsonplaceholder.typicode.com');
+const Processor = () => (
+  //<Provider store={store}>
+    <Admin
+      layout={MyLayout}
+      dashboard={Dashboard} 
+      dataProvider={multipleDataProvider} 
+      authProvider={authProvider}
+      i18nProvider={i18nProvider}
+      customReducers={{
+	<#list domainModels as domainModel>
+	${domainModel.id}ShowColumnSlicer,
+	${domainModel.id}FieldEditedSlicer,
+	</#list>
+	}}>
+    {/* <Resource name="posts" list={PostList}  edit={PostEdit} create={PostCreate} icon={PostIcon} /> */}
+    <#list domainModels as domainModel>
+    <Resource match={{id: "uid"}} 
+      name="${domainModel.id?lower_case}" 
+      list={${domainModel.className}List} 
+      edit={${domainModel.className}Edit} 
+      create={${domainModel.className}Create} 
+      icon={UserIcon} />
+    </#list>
+    </Admin>
+    //</Provider>
+);
+export default Processor;

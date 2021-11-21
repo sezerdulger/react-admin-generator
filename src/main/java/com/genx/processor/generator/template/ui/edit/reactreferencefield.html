@@ -1,0 +1,64 @@
+import * as React from "react";
+import {
+    List,
+    Datagrid,
+    TextField,
+    ReferenceField,
+    EditButton,
+    Edit,
+    SimpleForm,
+    ReferenceInput,
+    SelectInput,
+    TextInput,
+    Create,
+    Filter,
+    SimpleList,
+    useRecordContext,
+    useCreateController,
+    FormDataConsumer,
+    useGetOne,
+    useDataProvider,
+    AutocompleteInput
+} from 'react-admin';
+import Emitter from "../../../../emitter";
+import { useForm, useFormState } from 'react-final-form'
+import AxiosInstance from "../../../../AxiosInstance";
+
+const <@upperFC>${field.id}</@upperFC> = props => {
+    const form = useForm();
+    const dataProvider = useDataProvider();
+    const { values } = useFormState()
+
+    return (
+        <ReferenceInput {...props} label="${field.title}" source="${field.id}" reference="${field.referenceModelId?lower_case}" 
+        	perPage={100} 
+            onChange={(e) => {
+            	e.preventDefault()
+                 
+                Emitter.emit("${domainModel.id}_${field.id}_changed", {event: e, form: form, dataProvider: dataProvider, formAction: props.formAction })
+
+                return true
+            }}
+            disabled={values.disable${field.id?cap_first}}>
+            <SelectInput  {...props}
+             	optionText={record => <${field.id?cap_first}OptionsRenderer record={record} /> }
+            />
+        </ReferenceInput>
+    )
+}
+
+const ${field.id?cap_first}OptionsRenderer = props => {
+    const [title, setTitle] = React.useState("")
+
+    React.useEffect(async () => {
+        const record = props.record
+        
+        const t = ${field.referenceTitleFromRecord}
+        setTitle(t)
+    }, [])
+
+    return title
+    
+}
+
+export default <@upperFC>${field.id}</@upperFC>

@@ -4,7 +4,7 @@ plugins {
 	id 'java'
 }
 
-group = 'com.genx.processor'
+group = 'com.genx'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
@@ -20,11 +20,21 @@ jar {
     } 
 }
 
+configurations.all {
+    exclude module: 'spring-boot-starter-tomcat'
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-jetty'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
 	implementation 'org.freemarker:freemarker:2.3.20'
-	
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	//implementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+	implementation("org.modelmapper:modelmapper:2.4.2")
+
 	implementation 'com.squareup:javapoet:1.13.0'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

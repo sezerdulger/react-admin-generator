@@ -1,9 +1,16 @@
 
 server:
-  port: -1
+  port: 8090
+  servlet:
+    context-path: /api
 spring:
-  main:
-    web-application-type: none
+  #main:
+    #web-application-type: none
+  data:
+    mongodb:
+      #uri: mongodb://mongodb-server1:27017/genx-base-test
+      uri: mongodb://192.168.2.10:27017/genx-processor-test
+
 generator:
   modelPackage: model
   controllerPackage: controller
@@ -14,8 +21,12 @@ generator:
   processors:
   - id: model
     template: javamodelclass.html
-    packageName: model
+    packageName: model.dao
     suffix: ""
+  - id: dto
+    template: javadtoclass.html
+    packageName: model.dto
+    suffix: "DTO"
   - id: controller
     template: javacontrollerclass.html
     packageName: controller
@@ -43,97 +54,121 @@ generator:
   #  suffix: UI
   output-dir: generated
   domain-models:
-    - id: user
-      name: User
-      packageName: user
-      className: User
+    - id: tenant
+      name: Tenant
+      packageName: tenant
+      className: Tenant
       fields:
-        - id: firstname
-          javaType: String
-          title: Firstname
-          
-        - id: lastname
-          javaType: String
-          title: Lastname
-
-    - id: techsupport
-      name: TechSupport
-      packageName: techsupport
-      className: TechSupport
+         - id: title
+           javaType: String
+           title: Title
+         - id: className
+           javaType: String
+           title: ClassName
+         - id: description
+           javaType: String
+           title: Description
+         - id: name
+           javaType: String
+           title: name
+         - id: packageName
+           javaType: String
+           title: packageName
+         - id: uiSrcPath
+           javaType: String
+           title: uiSrcPath
+         - id: javaSrcPath
+           javaType: String
+           title: javaSrcPath
+    - id: entity
+      name: Entity
+      packageName: entity
+      className: Entity
       fields:
-         - id: customerTitle
+         - id: title
            javaType: String
-           title: Customer Title
-           
-         - id: address
+           title: Title
+         - id: className
            javaType: String
-           title: Address
-           
-         - id: tel
+           title: ClassName
+         - id: description
            javaType: String
-           title: Tel
-           
-         - id: emails
+           title: Description
+         - id: name
+           javaType: String
+           title: name
+         - id: packageName
+           javaType: String
+           title: packageName
+         - id: tenant
+           javaType: String
+           title: Tenant
+           reference: true
+           referenceModelId: tenant
+           referenceTitleFromRecord: 'record.title'
+           referenceTitles:
+             - title
+    - id: field
+      name: Field
+      packageName: field
+      className: Field
+      fields:
+         - id: name
+           javaType: String
+           title: Name
+         - id: type
+           javaType: String
+           title: Type
+         - id: supType
+           javaType: String
+           title: SuperType
+         - id: title
+           javaType: String
+           title: Title
+         - id: description
+           javaType: String
+           title: Description
+         - id: longText
+           javaType: Boolean
+           title: Is text Long?
+         - id: file
+           javaType: Boolean
+           title: Is File?
+         - id: playableVideo
+           javaType: Boolean
+           title: Is playable video?
+         - id: reference
+           javaType: Boolean
+           title: Is reference?
+         - id: referenceMultiple
+           javaType: Boolean
+           title: Is reference multiple?
+         - id: referenceTabbed
+           javaType: Boolean
+           title: Is reference tabbed?
+         - id: referenceAsForm
+           javaType: Boolean
+           title: Is reference as form?
+         - id: referenceEntityName
+           javaType: String
+           title: Reference Entity Name
+         - id: referenceTitleFromRecord
+           javaType: String
+           title: Reference Title From Record record =>
+         - id: referenceTitles
            javaSupType: List
            javaType: String
-           title: E-mails
-           
-         - id: authorizedPersonId
+           title: Reference Titles for List
+         - id: entity
            javaType: String
+           title: Entity
            reference: true
-           referenceModelId: user
-           referenceTitleFromRecord: 'record.firstname + " " + record.lastname'
-           title: Authorized Person Id
-           
-         - id: authorizedPerson
-           javaType: String
-           title: Authorized Person
-           
-         - id: requestDate
-           javaType: Date
-           title: Request Date
-           
-         - id: serviceStartDate
-           javaType: Date
-           title: Service Start Date
-           
-         - id: serviceEndDate
-           javaType: Date
-           title: Service End Date
-           
-         - id: serviceType
-           javaType: String
-           title: Service Type
-           
-         - id: scope
-           javaType: String
-           title: Scope
-           
-         - id: serviceDefinition
-           javaType: String
-           title: Service Definition
-           
-         - id: usedMaterial
-           javaType: String
-           title: Used Material
-           
-         - id: contracted
-           javaType: boolean
-           title: Contracted
-           
-         - id: serviceDescription
-           javaType: String
-           title: Service Description
-           
-         - id: duration
-           javaType: long
-           title: Duration
-           
-         - id: pricing
-           javaType: long
-           title: Pricing
-      
-    
+           referenceModelId: entity
+           #referenceTitleFromRecord: '(await AxiosInstance.get("/api/tenant/" + record.tenant)).data.title + " " +record.title'
+           referenceTitleFromRecord: 'record.title'
+           referenceTitles:
+             - title
+
 logging:
   level:
     com.genx: debug

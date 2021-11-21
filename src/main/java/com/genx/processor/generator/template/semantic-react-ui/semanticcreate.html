@@ -1,0 +1,108 @@
+import { useEffect, useReducer, useState } from "react";
+
+import { Button, Dropdown, Header, Icon, Image, Input, Modal, Pagination, Table, Form } from "semantic-ui-react"
+import { useTranslation } from "react-i18next";
+import * as i18nIsoCountries from 'i18n-iso-countries';
+import cities from 'cities.json';
+import csc from 'country-state-city'
+import i18n from "../../i18n";
+import AxiosInstance from "../../AxiosInstance";
+import {useParams} from "react-router-dom"
+import { Link } from "ra-ui-materialui";
+import { useHistory } from "react-router-dom";
+
+export const Create${domainModel.className}Form = props => {
+    const { t } = useTranslation();
+    const [entity, setEntity] = useState({})
+    const [searchSectorList, setSearchSectorList] = useState([])
+    
+    const history = useHistory();
+
+    useEffect(() => {
+        console.log("init my customer")
+        // SectorsClient.findAll({page:0, size:100, title:''}, (responseData) => {
+        //     setSearchSectorList(responseData.content)
+        // })
+    }, [])
+    
+
+    const sectorListChanged = (e, {name, value}) => {
+        console.log(props.toBeUpdatedEntity.sectorIdList)
+        
+        props.toBeUpdatedEntity.sectorIdList = value.map(v=> searchSectorList.filter(s => s.id==v)[0])
+        props.setToBeUpdatedEntity({...props.toBeUpdatedEntity})
+
+    }
+
+    const onBack = e => {
+        history.goBack()
+    }
+
+    const onUpdate = e => {
+        AxiosInstance.post("/customer", entity).then(response => {
+            console.log(response)
+            setEntity(response.data)
+        })
+    }
+
+    return(
+        <div>
+           <Form autoComplete='off' >
+                  
+                <Form.Group>
+                    <Form.Field width={4}>
+                       <Form.Input
+                            // disabled={!props.isAuthorizedToEdit}
+                            label={t('Title')}
+                            placeholder={t('Title')}
+                            name='title'
+                            onChange={handleChange}
+                            value={entity.title} />
+                    </Form.Field>
+                    
+                </Form.Group>
+               
+                <Form.Group>
+                    <Form.Field width={4}>
+                        <Form.Input
+                            // disabled={!props.isAuthorizedToEdit}
+                            label={t('Address')}
+                            placeholder={t('Address')}
+                            name='address'
+                            value={entity.address}
+                            // onChange={props.handleUpdatedEntityChange} 
+                            />
+                    </Form.Field>
+                </Form.Group>
+                <Form.Group >                      
+                    <Form.Field width={4}>
+                        <Form.Input
+                            // disabled={!props.isAuthorizedToEdit}
+                            label={t('Tel')}
+                            placeholder={t('Tel')}
+                            name='tel'
+                            value={entity.tel}
+                            // onChange={props.handleUpdatedEntityChange} 
+                            />
+                    </Form.Field>
+                  
+                </Form.Group>
+                <Form.Group>                      
+                    <Form.Field width={1}>
+                        <Button onClick={() => onBack()}>
+                            {t('<Back')}
+                        </Button>
+                    </Form.Field>
+                    <Form.Field width={1}>
+                       <Button primary type='submit' onClick={() => onUpdate()}>
+                            
+                            {t('Save')}
+                        </Button>
+                    </Form.Field>
+                  
+                </Form.Group>
+              
+            </Form>
+        </div>
+    )
+}

@@ -13,17 +13,80 @@ import {
     TextInput,
     Create,
     Filter,
-    SimpleList
+    SimpleList,
+    ArrayInput,
+    SimpleFormIterator,
+    DateInput,
+    DateTimeInput,
+    DateField,
+    TopToolbar,
+    CreateButton,
+    ExportButton,
+    useTranslate,
+    BooleanInput,
+    NumberInput
 } from 'react-admin';
 import { useMediaQuery } from '@material-ui/core';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
+import Emitter from "../../emitter";
+import { FormControlLabel } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import { useSelector, useDispatch } from 'react-redux'
+import { show } from "./slicer/${domainModel.id}ShowColumnSlicer";
+import AxiosInstance from "../../AxiosInstance";
+import {${domainModel.id}Ext, ${domainModel.className}ListCustomButtons} from "./ext/${domainModel.id}Ext";
+import { useFormState, useForm } from 'react-final-form';
+
 <#list domainModel.fields as field>
-import ${field.id} from "./create/fields/authorizedPersonId";
+import <@upperFC>${field.id}</@upperFC> from "./edit/fields/<@upperFC>${field.id}</@upperFC>";
  </#list>
 
+const columnStates = {
+		<#list domainModel.fields as field>
+		${field.id}: {list: true},
+		</#list>
+    }
+    
 export const ${domainModel.className}List = (props) => {
     const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
+    
+    const [columns, setColumns]=React.useState({})
+    
+    const ${domainModel.id}ShowColumnSlicer = useSelector(
+        (state) => state.${domainModel.id}ShowColumnSlicer
+    )
+    
+    React.useEffect( () => {
+		//const sessionColumns = sessionStorage.getItem("columns")
+        //if(sessionColumns) {
+        //    console.log("sessionColumns: " + sessionColumns)
+        //    const parsedColumns = JSON.parse(sessionColumns)
+        //    setColumns(parsedColumns)
+        //}
+        //else {
+        //    setColumns(columnStates)
+        //}
+        
+        //Emitter.on("show_column", ({columnId, show}) => {
+         //   console.log("column is showing: " + columnId + ", show is: " + show)
+         //   columns[columnId].list=show
+         //   setColumns({...columns})
+         //   sessionStorage.setItem("columns", JSON.stringify(columns))
+
+        //})
+    }, [])
+    
+     React.useEffect( () => {
+		console.log(${domainModel.id}ShowColumnSlicer)
+        setColumns({...${domainModel.id}ShowColumnSlicer})
+    }, [${domainModel.id}ShowColumnSlicer])
+    
     return (
-        <List {...props} filters={<${domainModel.className}Filter />}>
+        <List {...props} filters={<${domainModel.className}Filter />} actions={<ListActions />}>
             {isSmall ? (
                 <SimpleList
                     primaryText={record => record.firstname}
@@ -33,19 +96,32 @@ export const ${domainModel.className}List = (props) => {
             ) : (
                 <Datagrid>
                     <#list domainModel.fields as field>
-                    <#if field.reference>
                     
-                    <ReferenceField label="${field.title}" source="${field.id}" reference="${field.referenceModelId}">
-                        <TextField source="${field.referenceFieldId}" />
+                    <#if field.reference?? && field.reference>
+                    
+                    {columns.${field.id}?.list &&
+                    <ReferenceField label="${field.title}" source="${field.id}" reference="${field.referenceModelId?lower_case}">
+                    	<div>
+                        <#list field.referenceTitles as title><TextField source="${title}" /> &nbsp; </#list>
+                        </div>
                     </ReferenceField>
-                    
-                    <#else>
-                    
+                    }
+                    <#elseif field.javaType=="String" || field.javaType=="Long">
+                    {columns.${field.id}?.list &&
                     <TextField source="${field.id}" />
-                    
+                    }
+                     <#elseif field.javaType=="LocalDate">
+                     {columns.${field.id}?.list &&
+                     <DateField source="${field.id}" />
+                     }
+                     <#elseif field.javaType=="LocalDateTime">
+                     {columns.${field.id}?.list &&
+                     <DateField source="${field.id}" showTime />
+                     }
                     </#if>
                     </#list>
                     <EditButton />
+                    <${domainModel.className}ListCustomButtons />
                 </Datagrid>
             )}
         </List>
@@ -53,41 +129,180 @@ export const ${domainModel.className}List = (props) => {
 }
 
 export const ${domainModel.className}Edit = props => (
-    <Edit {...props}>
+    <Edit {...props} mutationMode='optimistic'>
         <SimpleForm>
         	<#list domainModel.fields as field>
-            <#if field.reference>
-            <ReferenceInput label="${field.title}" source="${field.id}" reference="${field.referenceModelId}">
-                <SelectInput source="${field.referenceFieldId}" />
-            </ReferenceInput>
-            <#else>
-            <TextInput <#if field.id == "uid">disabled</#if> source="${field.id}" />
-            </#if>
+            <<@upperFC>${field.id}</@upperFC> {...props} formAction="edit" />
             </#list>
         </SimpleForm>
     </Edit>
 );
 
 export const ${domainModel.className}Create = props => (
-    <Create {...props}>
+    <Create {...props} mutationMode='optimistic'>
         <SimpleForm>
-            <#list domainModel.fields as field>
-            <#if field.reference>
-            <ReferenceInput label="${field.title}" source="${field.id}" reference="${field.referenceModelId}">
-                <SelectInput source="${field.referenceFieldId}" />
-            </ReferenceInput>
-            <#else>
-            <TextInput source="${field.id}" />
-            </#if>
+         	<#list domainModel.fields as field>
+	        <<@upperFC>${field.id}</@upperFC> {...props} formAction="create" />
             </#list>
+            <${domainModel.className}CreateForm {...props}/>
         </SimpleForm>
     </Create>
 );
 
+const ${domainModel.className}CreateForm = props => {
+    const { values } = useFormState()
+    const form = useForm()
+
+
+    React.useEffect(() => {
+        console.log(values)
+        ${domainModel.id}Ext.edited(values, form)
+    }, [values])
+
+    return (<div></div>)
+}
+
 const ${domainModel.className}Filter = (props) => (
     <Filter {...props}>
     	<#list domainModel.fields as field>
+    	<#if field.javaSupType?? && field.javaSupType=="List">
+    	<ArrayInput source="${field.id}" label="${field.title}">
+            <SimpleFormIterator>
+                <TextInput  />
+            </SimpleFormIterator>
+        </ArrayInput>
+        <#elseif field.reference?? && field.reference>
+        <ReferenceInput label="${field.title}" source="${field.id}" reference="${field.referenceModelId?lower_case}" 
+        	perPage={100} 
+            onChange={(e) => {
+            	e.preventDefault()
+                return true
+            }}>
+            <SelectInput  {...props}
+             	optionText={record => <${field.id?cap_first}OptionsRenderer record={record} /> }
+            />
+        </ReferenceInput>
+        <#elseif field.javaType=="String">
         <TextInput label="${field.title}" source="${field.id}" allowEmpty />
+        <#elseif field.javaType=="Boolean">
+        <BooleanInput label="${field.title}" source="${field.id}" allowEmpty />
+        <#elseif field.javaType=="Long">
+        <NumberInput label="${field.title} Start" source="${field.id}$start" allowEmpty />
+        <NumberInput label="${field.title} End" source="${field.id}$end" allowEmpty />
+        <#elseif field.javaType=="LocalDate">
+        <DateInput source="${field.id}$start" label="${field.title} Start" />
+        <DateInput source="${field.id}$end" label="${field.title} End" />
+        <#elseif field.javaType=="LocalDateTime">
+        <DateTimeInput source="${field.id}$start" label="${field.title} Start" />
+		<DateTimeInput source="${field.id}$end" label="${field.title} End" />
+        </#if>
         </#list>
     </Filter>
+);
+<#list domainModel.fields as field>
+<#if field.reference?? && field.reference>
+const ${field.id?cap_first}OptionsRenderer = props => {
+    const [title, setTitle] = React.useState("")
+
+    React.useEffect(async () => {
+        const record = props.record
+        
+        const t = ${field.referenceTitleFromRecord}
+        setTitle(t)
+    }, [])
+
+    return title
+    
+}
+</#if>
+</#list>
+
+
+const ListActions = (props) => (
+    <TopToolbar>
+        {<ColumnsMenu />}
+        {React.cloneElement(props.filters, { context: 'button' })}
+        <CreateButton/>
+        <ExportButton/>
+        {/* Add your custom actions */}
+        
+    </TopToolbar>
+);
+
+const ColumnsMenu = props => {
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const classes = useStyles(props);
+    const [columns, setColumns]=React.useState({})
+    const dispatch = useDispatch()
+    const t = useTranslate()
+
+    React.useEffect(() => {
+        const sessionColumns = sessionStorage.getItem("${domainModel.tenant}_${domainModel.id}_columns")
+
+        if(sessionColumns != null) {
+            console.log("sessionColumns: " + sessionColumns)
+            const parsedColumns = JSON.parse(sessionColumns)
+            setColumns(parsedColumns)
+            Object.keys(parsedColumns).forEach(c => {
+                dispatch(show({[c]: parsedColumns[c]}))
+            })
+        }
+        else {
+            setColumns(columnStates)
+            Object.keys(columnStates).forEach(c => {
+                dispatch(show({[c]: columnStates[c]}))
+            })
+        }
+    }, [])
+
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+    
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
+
+    const showColumn = (e, columnId) => {
+        const showed = e.target.checked
+        const v = {list: showed}
+        setColumns({...columns, [columnId]: v})
+		sessionStorage.setItem("${domainModel.tenant}_${domainModel.id}_columns", JSON.stringify({...columns, [columnId]: v}))
+		const showData={}
+        showData[columnId] = {list: showed}
+        dispatch(show(showData))
+        //Emitter.emit("show_column", {columnId: columnId, show: e.target.checked})
+    }
+
+    return (
+        <div>
+        <Button size="small" color="primary" onClick={handleClick} startIcon={<VisibilityIcon />}
+        className={classes.sizeSmall, classes.button, classes.RaButton, classes.root, classes.text}>
+            {t('Show Columns')}
+        </Button>
+            <Menu 
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}>
+            <#list domainModel.fields as field>
+                <MenuItem>
+                <FormControlLabel
+					control={
+                    <Checkbox onChange={e => showColumn(e, '${field.id}')} checked={columns.${field.id}?.list}  />}
+                	label={t('resources.${domainModel.id}.fields.${field.id}')}
+                />
+                </MenuItem>
+            </#list>
+            </Menu>
+        </div>
+    );
+}
+
+
+const useStyles = makeStyles(
+    {
+       
+    }
 );

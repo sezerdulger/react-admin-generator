@@ -1,0 +1,20 @@
+
+class ${domainModel.className}Ext {
+    constructor() {
+        
+    }
+
+    edited = (values, form ) => {
+        console.log(values)
+    }
+}
+
+export const ${domainModel.id}Ext= new ${domainModel.className}Ext
+
+export const ${domainModel.className}ListCustomButtons = props => {
+    return (
+        <div></div>
+    )
+}
+
+export default {${domainModel.id}Ext, ${domainModel.className}ListCustomButtons}

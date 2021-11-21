@@ -1,0 +1,17 @@
+import { createSlice } from '@reduxjs/toolkit'
+
+const initialState = {  }
+
+const ${domainModel.id}FieldEditedSlicer = createSlice({
+  name: '${domainModel.id}FieldEditedSlicer',
+  initialState,
+  reducers: {
+    edited(state, action) {
+      state[action.payload.field] = action.payload.value
+      //console.log(state)
+    },
+  },
+})
+
+export const { edited } = ${domainModel.id}FieldEditedSlicer.actions
+export default ${domainModel.id}FieldEditedSlicer.reducer
